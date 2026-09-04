@@ -5,69 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AskMe</title>
 <style>
+  * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: -apple-system, sans-serif;
-    background: #111;
+    background: #0d0d0f;
     color: #fff;
     display: flex;
     flex-direction: column;
     height: 100vh;
   }
   header {
-    padding: 16px;
-    font-size: 20px;
-    font-weight: bold;
-    border-bottom: 1px solid #333;
+    padding: 18px;
+    font-size: 22px;
+    font-weight: 700;
     text-align: center;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   }
   #chat {
     flex: 1;
     overflow-y: auto;
     padding: 16px;
+    display: flex;
+    flex-direction: column;
   }
   .msg {
     margin-bottom: 12px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    max-width: 80%;
-    line-height: 1.4;
+    padding: 12px 16px;
+    border-radius: 18px;
+    max-width: 78%;
+    line-height: 1.5;
+    font-size: 15px;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .user {
-    background: #2563eb;
-    margin-left: auto;
-    text-align: right;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
   }
   .bot {
-    background: #2a2a2a;
-    margin-right: auto;
+    background: #1e1e22;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .typing {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+  .typing span {
+    width: 7px;
+    height: 7px;
+    background: #999;
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0.2; }
+    40% { opacity: 1; }
   }
   #inputArea {
     display: flex;
     padding: 12px;
-    border-top: 1px solid #333;
+    gap: 8px;
+    background: #0d0d0f;
+    border-top: 1px solid #222;
   }
   #userInput {
     flex: 1;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border-radius: 24px;
     border: none;
     font-size: 16px;
+    background: #1e1e22;
+    color: #fff;
+    outline: none;
   }
+  #userInput::placeholder { color: #777; }
   #sendBtn {
-    margin-left: 8px;
-    padding: 10px 16px;
+    padding: 0 20px;
     border: none;
-    border-radius: 8px;
-    background: #2563eb;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 15px;
   }
+  #sendBtn:active { opacity: 0.8; }
 </style>
 </head>
 <body>
 
-<header>AskMe</header>
+<header>✨ AskMe</header>
 <div id="chat"></div>
 
 <div id="inputArea">
@@ -86,6 +122,16 @@ function addMessage(text, sender) {
   div.textContent = text;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
 }
 
 async function sendMessage() {
@@ -93,12 +139,12 @@ async function sendMessage() {
   if (!text) return;
   addMessage(text, 'user');
   input.value = '';
-  addMessage('सोच रहा हूँ...', 'bot');
+  const typingDiv = addTyping();
 
   setTimeout(() => {
-    chat.lastChild.remove();
-    addMessage('यह एक टस्ट जवाब है। असली AI अगले स्टेप में जुड़ेगा।', 'bot');
-  }, 800);
+    typingDiv.remove();
+    addMessage('यह एक टेस्ट जवाब है। असली AI अगले स्टेप में जुड़ेगा।', 'bot');
+  }, 900);
 }
 
 sendBtn.addEventListener('click', sendMessage);
@@ -109,4 +155,5 @@ input.addEventListener('keypress', function(e) {
 
 </body>
 </html>
+
 
