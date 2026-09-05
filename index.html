@@ -245,6 +245,332 @@ input.addEventListener('keypress', function(e) {
       selectedLanguage = savedLanguage;
     }
   });
+ /* ================================
+   GLOBAL BLACK & WHITE THEME
+   ================================ */
+
+document.documentElement.style.setProperty("--primary-color", "#ffffff");
+document.documentElement.style.setProperty("--accent-color", "#ffffff");
+
+const blackWhiteStyle = document.createElement("style");
+
+blackWhiteStyle.textContent = `
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        background: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    body * {
+        border-color: #ffffff !important;
+    }
+
+    button,
+    input,
+    textarea,
+    select,
+    .button,
+    .card,
+    .menu,
+    .sidebar,
+    .chat,
+    .modal {
+        background: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    button:hover,
+    button:focus,
+    .button:hover {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #aaaaaa !important;
+    }
+`;
+
+document.head.appendChild(blackWhiteStyle);
+
+
+/* ================================
+   COMPLETE LANGUAGE SYSTEM
+   ================================ */
+
+const translations = {
+
+    en: {
+        "New Chat": "New Chat",
+        "Chat History": "Chat History",
+        "History": "History",
+        "Settings": "Settings",
+        "Language": "Language",
+        "English": "English",
+        "Hindi": "Hindi",
+        "Punjabi": "Punjabi",
+        "Send": "Send",
+        "Talk": "Talk",
+        "Image": "Image",
+        "Video": "Video",
+        "Code": "Code",
+        "Voice": "Voice",
+        "Please select a language first.": "Please select a language first.",
+        "Create Code Word": "Create Code Word",
+        "Enter Code Word": "Enter Code Word",
+        "Incorrect Code Word": "Incorrect Code Word",
+        "Chat History Locked": "Chat History Locked"
+    },
+
+    hi: {
+        "New Chat": "नई चैट",
+        "Chat History": "चैट हिस्ट्री",
+        "History": "हिस्ट्री",
+        "Settings": "सेटिंग्स",
+        "Language": "भाषा",
+        "English": "अंग्रेज़ी",
+        "Hindi": "हिंदी",
+        "Punjabi": "पंजाबी",
+        "Send": "भेजें",
+        "Talk": "बात करें",
+        "Image": "इमेज",
+        "Video": "वीडियो",
+        "Code": "कोड",
+        "Voice": "वॉइस",
+        "Please select a language first.": "कृपया पहले भाषा चुनें।",
+        "Create Code Word": "कोड वर्ड बनाएं",
+        "Enter Code Word": "कोड वर्ड दर्ज करें",
+        "Incorrect Code Word": "गलत कोड वर्ड",
+        "Chat History Locked": "चैट हिस्ट्री लॉक है"
+    },
+
+    pa: {
+        "New Chat": "ਨਵੀਂ ਚੈਟ",
+        "Chat History": "ਚੈਟ ਹਿਸਟਰੀ",
+        "History": "ਹਿਸਟਰੀ",
+        "Settings": "ਸੈਟਿੰਗਾਂ",
+        "Language": "ਭਾਸ਼ਾ",
+        "English": "ਅੰਗਰੇਜ਼ੀ",
+        "Hindi": "ਹਿੰਦੀ",
+        "Punjabi": "ਪੰਜਾਬੀ",
+        "Send": "ਭੇਜੋ",
+        "Talk": "ਗੱਲ ਕਰੋ",
+        "Image": "ਤਸਵੀਰ",
+        "Video": "ਵੀਡੀਓ",
+        "Code": "ਕੋਡ",
+        "Voice": "ਵੌਇਸ",
+        "Please select a language first.": "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਭਾਸ਼ਾ ਚੁਣੋ।",
+        "Create Code Word": "ਕੋਡ ਵਰਡ ਬਣਾਓ",
+        "Enter Code Word": "ਕੋਡ ਵਰਡ ਦਰਜ ਕਰੋ",
+        "Incorrect Code Word": "ਗਲਤ ਕੋਡ ਵਰਡ",
+        "Chat History Locked": "ਚੈਟ ਹਿਸਟਰੀ ਲੌਕ ਹੈ"
+    }
+};
+
+
+/* ================================
+   APPLY LANGUAGE TO ENTIRE UI
+   ================================ */
+
+function applyLanguage(language) {
+
+    const lang = translations[language] || translations.en;
+
+    document.documentElement.lang = language;
+
+    /*
+       Change visible text everywhere.
+       data-i18n elements are supported automatically.
+    */
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+
+        const key = element.getAttribute("data-i18n");
+
+        if (lang[key]) {
+            element.textContent = lang[key];
+        }
+
+    });
+
+    /*
+       Also translate buttons, labels and common UI text.
+    */
+
+    document.querySelectorAll(
+        "button, label, option, h1, h2, h3, h4, p, span"
+    ).forEach(element => {
+
+        const original = element.getAttribute("data-original-text")
+            || element.textContent.trim();
+
+        if (!element.getAttribute("data-original-text")) {
+            element.setAttribute("data-original-text", original);
+        }
+
+        if (lang[original]) {
+            element.textContent = lang[original];
+        }
+    });
+
+    /*
+       Translate placeholders.
+    */
+
+    document.querySelectorAll("input, textarea").forEach(element => {
+
+        const placeholder = element.getAttribute("data-original-placeholder")
+            || element.placeholder;
+
+        if (!element.getAttribute("data-original-placeholder")) {
+            element.setAttribute(
+                "data-original-placeholder",
+                placeholder
+            );
+        }
+
+        if (lang[placeholder]) {
+            element.placeholder = lang[placeholder];
+        }
+    });
+
+    localStorage.setItem("askMeLanguage", language);
+}
+
+
+/* ================================
+   LANGUAGE SELECTION
+   ================================ */
+
+function setLanguage(language) {
+
+    if (!translations[language]) {
+        return;
+    }
+
+    selectedLanguage = language;
+
+    localStorage.setItem(
+        "askMeLanguage",
+        language
+    );
+
+    applyLanguage(language);
+}
+
+
+/* ================================
+   LOAD SAVED LANGUAGE
+   ================================ */
+
+window.addEventListener("load", function () {
+
+    const savedLanguage =
+        localStorage.getItem("askMeLanguage");
+
+    if (savedLanguage && translations[savedLanguage]) {
+
+        selectedLanguage = savedLanguage;
+
+        applyLanguage(savedLanguage);
+    }
+
+});
+
+
+/* ================================
+   CHAT HISTORY
+   ================================ */
+
+let chatHistory = JSON.parse(
+    localStorage.getItem("askMeChatHistory") || "[]"
+);
+
+let currentChatId = null;
+
+function createNewChat() {
+
+    const chat = {
+        id: Date.now(),
+        title: "New Chat",
+        messages: [],
+        createdAt: new Date().toISOString()
+    };
+
+    chatHistory.unshift(chat);
+
+    currentChatId = chat.id;
+
+    saveChatHistory();
+
+    renderChatHistory();
+}
+
+
+function saveChatHistory() {
+
+    localStorage.setItem(
+        "askMeChatHistory",
+        JSON.stringify(chatHistory)
+    );
+}
+
+
+function renderChatHistory() {
+
+    const historyContainer =
+        document.getElementById("chatHistory");
+
+    if (!historyContainer) {
+        return;
+    }
+
+    historyContainer.innerHTML = "";
+
+    chatHistory.forEach(chat => {
+
+        const item = document.createElement("button");
+
+        item.textContent = chat.title;
+
+        item.onclick = function () {
+            openChat(chat.id);
+        };
+
+        historyContainer.appendChild(item);
+    });
+}
+
+
+function openChat(id) {
+
+    const chat = chatHistory.find(
+        item => item.id === id
+    );
+
+    if (!chat) {
+        return;
+    }
+
+    currentChatId = id;
+
+    /*
+       Existing chat-opening logic can use this chat object.
+    */
+
+    console.log("Opened chat:", chat);
+}
+
+
+/* ================================
+   START
+   ================================ */
+
+renderChatHistory();
 </script>
 </body>
 </html>
