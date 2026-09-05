@@ -871,6 +871,210 @@ window.addEventListener("load", function() {
 
 });
 </script>
+ <!-- ASKME LANGUAGE SCREEN -->
+<div id="askmeLanguageScreen" class="askme-overlay">
+  <div class="askme-language-box">
+    <h1>Welcome to AskMe</h1>
+    <p>अपनी पसंदीदा भाषा चुनें</p>
+
+    <button onclick="askmeSelectLanguage('English', this)">🇬🇧 English</button>
+    <button onclick="askmeSelectLanguage('Hindi', this)">🇮🇳 हिंदी</button>
+    <button onclick="askmeSelectLanguage('Punjabi', this)">ਪੰਜਾਬੀ</button>
+    <button onclick="askmeSelectLanguage('Urdu', this)">اردو</button>
+
+    <button class="askme-continue" onclick="askmeContinue()">
+      Continue
+    </button>
+  </div>
+</div>
+
+<!-- HISTORY SCREEN -->
+<div id="askmeHistoryScreen" class="askme-history-overlay">
+  <div class="askme-history-box">
+
+    <div class="askme-history-header">
+      <h2>Chat History</h2>
+
+      <button
+        class="askme-history-close"
+        onclick="closeAskMeHistory()">
+        ×
+      </button>
+    </div>
+
+    <div id="askmeHistoryList">
+      <p class="askme-no-history">
+        अभी कोई chat history नहीं है।
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .askme-overlay,
+  .askme-history-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #050505;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .askme-language-box {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .askme-language-box h1 {
+    color: white;
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+
+  .askme-language-box p {
+    color: #aaa;
+    margin-bottom: 25px;
+  }
+
+  .askme-language-box button {
+    width: 100%;
+    padding: 16px;
+    margin: 6px 0;
+    border-radius: 14px;
+    border: 1px solid #245c45;
+    background: #101510;
+    color: white;
+    font-size: 17px;
+  }
+
+  .askme-language-box button.selected {
+    background: #12633f;
+    border-color: #20c77a;
+  }
+
+  .askme-language-box .askme-continue {
+    margin-top: 18px;
+    background: #15945b;
+    border: none;
+  }
+
+  /* HISTORY */
+
+  .askme-history-overlay {
+    display: none;
+    background: rgba(0, 0, 0, 0.75);
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .askme-history-box {
+    width: 85%;
+    max-width: 380px;
+    height: 100%;
+    background: #101310;
+    border-right: 1px solid #26352e;
+    padding: 22px;
+    overflow-y: auto;
+  }
+
+  .askme-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+  }
+
+  .askme-history-header h2 {
+    color: white;
+    margin: 0;
+  }
+
+  .askme-history-close {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid #39423d;
+    background: #171b18;
+    color: white;
+    font-size: 28px;
+  }
+
+  .askme-no-history {
+    color: #999;
+    text-align: center;
+    margin-top: 50px;
+  }
+</style>
+
+<script>
+  let askmeSelectedLanguage = "";
+
+  function askmeSelectLanguage(language, button) {
+    askmeSelectedLanguage = language;
+
+    document
+      .querySelectorAll("#askmeLanguageScreen button")
+      .forEach(function(btn) {
+        btn.classList.remove("selected");
+      });
+
+    button.classList.add("selected");
+  }
+
+  function askmeContinue() {
+    if (!askmeSelectedLanguage) {
+      alert("पहले भाषा चुनें।");
+      return;
+    }
+
+    localStorage.setItem(
+      "askmeLanguage",
+      askmeSelectedLanguage
+    );
+
+    document.getElementById(
+      "askmeLanguageScreen"
+    ).style.display = "none";
+  }
+
+  function openAskMeHistory() {
+    document.getElementById(
+      "askmeHistoryScreen"
+    ).style.display = "flex";
+  }
+
+  function closeAskMeHistory() {
+    document.getElementById(
+      "askmeHistoryScreen"
+    ).style.display = "none";
+  }
+
+  window.addEventListener("load", function() {
+
+    const savedLanguage =
+      localStorage.getItem("askmeLanguage");
+
+    if (savedLanguage) {
+      askmeSelectedLanguage = savedLanguage;
+
+      document.getElementById(
+        "askmeLanguageScreen"
+      ).style.display = "none";
+    }
+
+  });
+
+  /*
+    Three-dot button के लिए:
+    अपने existing three-dot button में
+    onclick="openAskMeHistory()"
+    लगाना है।
+  */
+</script>
 </body>
 </html>
 
