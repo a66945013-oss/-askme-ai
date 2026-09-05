@@ -245,332 +245,631 @@ input.addEventListener('keypress', function(e) {
       selectedLanguage = savedLanguage;
     }
   });
- /* ================================
-   GLOBAL BLACK & WHITE THEME
-   ================================ */
+ /* =====================================================
+   ASKME — CORRECT LANGUAGE + BLACK/WHITE + CHAT HISTORY
+   ===================================================== */
 
-document.documentElement.style.setProperty("--primary-color", "#ffffff");
-document.documentElement.style.setProperty("--accent-color", "#ffffff");
+const LANG = {
+  English: {
+    welcome: "Welcome to AskMe",
+    choose: "Choose your preferred language",
+    continue: "Continue",
+    placeholder: "Type your question...",
+    send: "Send",
+    newChat: "New Chat",
+    history: "Chat History",
+    settings: "Settings",
+    language: "Language",
+    noHistory: "No previous chats",
+    codeWord: "Create a code word for Chat History",
+    enterCode: "Enter your Chat History code word",
+    wrongCode: "Incorrect code word",
+    locked: "Chat History is locked after 5 incorrect attempts.",
+    selectFirst: "Please select a language first.",
+    assistant: "AskMe"
+  },
 
-const blackWhiteStyle = document.createElement("style");
+  Hindi: {
+    welcome: "AskMe में आपका स्वागत है",
+    choose: "अपनी पसंदीदा भाषा चुनें",
+    continue: "जारी रखें",
+    placeholder: "अपना सवाल लिखें...",
+    send: "भेजें",
+    newChat: "नई चैट",
+    history: "चैट हिस्ट्री",
+    settings: "सेटिंग्स",
+    language: "भाषा",
+    noHistory: "कोई पुरानी चैट नहीं है",
+    codeWord: "चैट हिस्ट्री के लिए कोड वर्ड बनाएं",
+    enterCode: "अपना चैट हिस्ट्री कोड वर्ड डालें",
+    wrongCode: "गलत कोड वर्ड",
+    locked: "5 गलत प्रयासों के बाद चैट हिस्ट्री लॉक है।",
+    selectFirst: "कृपया पहले भाषा चुनें।",
+    assistant: "AskMe"
+  },
 
-blackWhiteStyle.textContent = `
-    * {
-        box-sizing: border-box;
-    }
-
-    html, body {
-        background: #000000 !important;
-        color: #ffffff !important;
-    }
-
-    body * {
-        border-color: #ffffff !important;
-    }
-
-    button,
-    input,
-    textarea,
-    select,
-    .button,
-    .card,
-    .menu,
-    .sidebar,
-    .chat,
-    .modal {
-        background: #000000 !important;
-        color: #ffffff !important;
-    }
-
-    button:hover,
-    button:focus,
-    .button:hover {
-        background: #ffffff !important;
-        color: #000000 !important;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-        color: #aaaaaa !important;
-    }
-`;
-
-document.head.appendChild(blackWhiteStyle);
-
-
-/* ================================
-   COMPLETE LANGUAGE SYSTEM
-   ================================ */
-
-const translations = {
-
-    en: {
-        "New Chat": "New Chat",
-        "Chat History": "Chat History",
-        "History": "History",
-        "Settings": "Settings",
-        "Language": "Language",
-        "English": "English",
-        "Hindi": "Hindi",
-        "Punjabi": "Punjabi",
-        "Send": "Send",
-        "Talk": "Talk",
-        "Image": "Image",
-        "Video": "Video",
-        "Code": "Code",
-        "Voice": "Voice",
-        "Please select a language first.": "Please select a language first.",
-        "Create Code Word": "Create Code Word",
-        "Enter Code Word": "Enter Code Word",
-        "Incorrect Code Word": "Incorrect Code Word",
-        "Chat History Locked": "Chat History Locked"
-    },
-
-    hi: {
-        "New Chat": "नई चैट",
-        "Chat History": "चैट हिस्ट्री",
-        "History": "हिस्ट्री",
-        "Settings": "सेटिंग्स",
-        "Language": "भाषा",
-        "English": "अंग्रेज़ी",
-        "Hindi": "हिंदी",
-        "Punjabi": "पंजाबी",
-        "Send": "भेजें",
-        "Talk": "बात करें",
-        "Image": "इमेज",
-        "Video": "वीडियो",
-        "Code": "कोड",
-        "Voice": "वॉइस",
-        "Please select a language first.": "कृपया पहले भाषा चुनें।",
-        "Create Code Word": "कोड वर्ड बनाएं",
-        "Enter Code Word": "कोड वर्ड दर्ज करें",
-        "Incorrect Code Word": "गलत कोड वर्ड",
-        "Chat History Locked": "चैट हिस्ट्री लॉक है"
-    },
-
-    pa: {
-        "New Chat": "ਨਵੀਂ ਚੈਟ",
-        "Chat History": "ਚੈਟ ਹਿਸਟਰੀ",
-        "History": "ਹਿਸਟਰੀ",
-        "Settings": "ਸੈਟਿੰਗਾਂ",
-        "Language": "ਭਾਸ਼ਾ",
-        "English": "ਅੰਗਰੇਜ਼ੀ",
-        "Hindi": "ਹਿੰਦੀ",
-        "Punjabi": "ਪੰਜਾਬੀ",
-        "Send": "ਭੇਜੋ",
-        "Talk": "ਗੱਲ ਕਰੋ",
-        "Image": "ਤਸਵੀਰ",
-        "Video": "ਵੀਡੀਓ",
-        "Code": "ਕੋਡ",
-        "Voice": "ਵੌਇਸ",
-        "Please select a language first.": "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਭਾਸ਼ਾ ਚੁਣੋ।",
-        "Create Code Word": "ਕੋਡ ਵਰਡ ਬਣਾਓ",
-        "Enter Code Word": "ਕੋਡ ਵਰਡ ਦਰਜ ਕਰੋ",
-        "Incorrect Code Word": "ਗਲਤ ਕੋਡ ਵਰਡ",
-        "Chat History Locked": "ਚੈਟ ਹਿਸਟਰੀ ਲੌਕ ਹੈ"
-    }
+  Punjabi: {
+    welcome: "AskMe ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ",
+    choose: "ਆਪਣੀ ਪਸੰਦੀਦਾ ਭਾਸ਼ਾ ਚੁਣੋ",
+    continue: "ਜਾਰੀ ਰੱਖੋ",
+    placeholder: "ਆਪਣਾ ਸਵਾਲ ਲਿਖੋ...",
+    send: "ਭੇਜੋ",
+    newChat: "ਨਵੀਂ ਚੈਟ",
+    history: "ਚੈਟ ਹਿਸਟਰੀ",
+    settings: "ਸੈਟਿੰਗਾਂ",
+    language: "ਭਾਸ਼ਾ",
+    noHistory: "ਕੋਈ ਪੁਰਾਣੀ ਚੈਟ ਨਹੀਂ ਹੈ",
+    codeWord: "ਚੈਟ ਹਿਸਟਰੀ ਲਈ ਕੋਡ ਵਰਡ ਬਣਾਓ",
+    enterCode: "ਆਪਣਾ ਚੈਟ ਹਿਸਟਰੀ ਕੋਡ ਵਰਡ ਦਰਜ ਕਰੋ",
+    wrongCode: "ਗਲਤ ਕੋਡ ਵਰਡ",
+    locked: "5 ਗਲਤ ਕੋਸ਼ਿਸ਼ਾਂ ਤੋਂ ਬਾਅਦ ਚੈਟ ਹਿਸਟਰੀ ਲੌਕ ਹੈ।",
+    selectFirst: "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਭਾਸ਼ਾ ਚੁਣੋ।",
+    assistant: "AskMe"
+  }
 };
 
 
-/* ================================
-   APPLY LANGUAGE TO ENTIRE UI
-   ================================ */
+/* =====================================================
+   BLACK + WHITE ONLY
+   ===================================================== */
 
-function applyLanguage(language) {
+const bw = document.createElement("style");
 
-    const lang = translations[language] || translations.en;
+bw.textContent = `
+  html, body {
+    background: #000 !important;
+    color: #fff !important;
+  }
 
-    document.documentElement.lang = language;
+  header {
+    background: #000 !important;
+    color: #fff !important;
+    border-bottom: 1px solid #fff !important;
+    box-shadow: none !important;
+  }
 
-    /*
-       Change visible text everywhere.
-       data-i18n elements are supported automatically.
-    */
+  #chat {
+    background: #000 !important;
+  }
 
-    document.querySelectorAll("[data-i18n]").forEach(element => {
+  #inputArea {
+    background: #000 !important;
+    border-top: 1px solid #fff !important;
+  }
 
-        const key = element.getAttribute("data-i18n");
+  #userInput {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+  }
 
-        if (lang[key]) {
-            element.textContent = lang[key];
-        }
+  #userInput::placeholder {
+    color: #aaa !important;
+  }
 
-    });
+  #sendBtn {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #fff !important;
+  }
 
-    /*
-       Also translate buttons, labels and common UI text.
-    */
+  .user {
+    background: #fff !important;
+    color: #000 !important;
+  }
 
-    document.querySelectorAll(
-        "button, label, option, h1, h2, h3, h4, p, span"
-    ).forEach(element => {
+  .bot {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+  }
 
-        const original = element.getAttribute("data-original-text")
-            || element.textContent.trim();
+  #languageScreen {
+    background: #000 !important;
+    color: #fff !important;
+  }
 
-        if (!element.getAttribute("data-original-text")) {
-            element.setAttribute("data-original-text", original);
-        }
+  #languageScreen button {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+  }
 
-        if (lang[original]) {
-            element.textContent = lang[original];
-        }
-    });
+  #languageScreen button.selected {
+    background: #fff !important;
+    color: #000 !important;
+  }
 
-    /*
-       Translate placeholders.
-    */
+  #languageScreen button:last-child {
+    background: #fff !important;
+    color: #000 !important;
+  }
 
-    document.querySelectorAll("input, textarea").forEach(element => {
+  #askmeSidebar {
+    background: #000 !important;
+    color: #fff !important;
+    border-right: 1px solid #fff !important;
+  }
 
-        const placeholder = element.getAttribute("data-original-placeholder")
-            || element.placeholder;
+  #askmeSidebar button {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+  }
 
-        if (!element.getAttribute("data-original-placeholder")) {
-            element.setAttribute(
-                "data-original-placeholder",
-                placeholder
-            );
-        }
+  #askmeSidebar button:hover {
+    background: #fff !important;
+    color: #000 !important;
+  }
 
-        if (lang[placeholder]) {
-            element.placeholder = lang[placeholder];
-        }
-    });
+  #askmeHistoryList button {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    text-align: left;
+    border-radius: 10px;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+  }
+`;
 
-    localStorage.setItem("askMeLanguage", language);
+document.head.appendChild(bw);
+
+
+/* =====================================================
+   LANGUAGE
+   ===================================================== */
+
+function getCurrentLanguage() {
+  return localStorage.getItem("askmeLanguage") || "";
+}
+
+function getText() {
+  return LANG[getCurrentLanguage()] || LANG.English;
+}
+
+function translateApp() {
+
+  const t = getText();
+
+  const title = document.querySelector("#languageScreen h1");
+  const description = document.querySelector("#languageScreen p");
+  const continueButton =
+    document.querySelector("#languageScreen button:last-child");
+
+  if (title) {
+    title.textContent = t.welcome;
+  }
+
+  if (description) {
+    description.textContent = t.choose;
+  }
+
+  if (continueButton) {
+    continueButton.textContent = t.continue;
+  }
+
+  const input = document.getElementById("userInput");
+
+  if (input) {
+    input.placeholder = t.placeholder;
+  }
+
+  const send = document.getElementById("sendBtn");
+
+  if (send) {
+    send.textContent = t.send;
+  }
+
+  const header = document.querySelector("header");
+
+  if (header) {
+    header.textContent = "✨ " + t.assistant;
+  }
+
+  renderHistory();
 }
 
 
-/* ================================
+/* =====================================================
    LANGUAGE SELECTION
-   ================================ */
+   ===================================================== */
 
-function setLanguage(language) {
+window.chooseLanguage = function(language, button) {
 
-    if (!translations[language]) {
-        return;
-    }
+  if (!LANG[language]) return;
 
-    selectedLanguage = language;
+  selectedLanguage = language;
 
-    localStorage.setItem(
-        "askMeLanguage",
-        language
-    );
+  localStorage.setItem("askmeLanguage", language);
 
-    applyLanguage(language);
-}
+  document
+    .querySelectorAll("#languageScreen button")
+    .forEach(btn => btn.classList.remove("selected"));
 
+  if (button) {
+    button.classList.add("selected");
+  }
 
-/* ================================
-   LOAD SAVED LANGUAGE
-   ================================ */
-
-window.addEventListener("load", function () {
-
-    const savedLanguage =
-        localStorage.getItem("askMeLanguage");
-
-    if (savedLanguage && translations[savedLanguage]) {
-
-        selectedLanguage = savedLanguage;
-
-        applyLanguage(savedLanguage);
-    }
-
-});
+  translateApp();
+};
 
 
-/* ================================
+window.continueAskMe = function() {
+
+  if (!selectedLanguage) {
+    alert(getText().selectFirst);
+    return;
+  }
+
+  localStorage.setItem(
+    "askmeLanguage",
+    selectedLanguage
+  );
+
+  document
+    .getElementById("languageScreen")
+    .style.display = "none";
+
+  createAskMeSidebar();
+  translateApp();
+};
+
+
+/* =====================================================
    CHAT HISTORY
-   ================================ */
+   ===================================================== */
 
-let chatHistory = JSON.parse(
-    localStorage.getItem("askMeChatHistory") || "[]"
+let askMeHistory = JSON.parse(
+  localStorage.getItem("askMeHistory") || "[]"
 );
 
-let currentChatId = null;
+let activeChat = null;
+
+function saveHistory() {
+
+  localStorage.setItem(
+    "askMeHistory",
+    JSON.stringify(askMeHistory)
+  );
+}
+
 
 function createNewChat() {
 
-    const chat = {
-        id: Date.now(),
-        title: "New Chat",
-        messages: [],
-        createdAt: new Date().toISOString()
+  activeChat = {
+    id: Date.now(),
+    title: getText().newChat,
+    messages: [],
+    date: new Date().toISOString()
+  };
+
+  askMeHistory.unshift(activeChat);
+
+  saveHistory();
+  renderHistory();
+
+  const chatBox = document.getElementById("chat");
+
+  if (chatBox) {
+    chatBox.innerHTML = "";
+  }
+}
+
+
+function renderHistory() {
+
+  const list =
+    document.getElementById("askmeHistoryList");
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (askMeHistory.length === 0) {
+
+    const empty = document.createElement("div");
+
+    empty.textContent = getText().noHistory;
+    empty.style.padding = "10px";
+    empty.style.color = "#aaa";
+
+    list.appendChild(empty);
+
+    return;
+  }
+
+  askMeHistory.forEach(chat => {
+
+    const button = document.createElement("button");
+
+    button.textContent = chat.title;
+
+    button.onclick = function() {
+      openSavedChat(chat.id);
     };
 
-    chatHistory.unshift(chat);
-
-    currentChatId = chat.id;
-
-    saveChatHistory();
-
-    renderChatHistory();
+    list.appendChild(button);
+  });
 }
 
 
-function saveChatHistory() {
+function openSavedChat(id) {
+
+  const chat = askMeHistory.find(
+    item => item.id === id
+  );
+
+  if (!chat) return;
+
+  activeChat = chat;
+
+  const chatBox =
+    document.getElementById("chat");
+
+  if (!chatBox) return;
+
+  chatBox.innerHTML = "";
+
+  chat.messages.forEach(message => {
+
+    addMessage(
+      message.text,
+      message.sender
+    );
+
+  });
+}
+
+
+/* =====================================================
+   SAVE EACH MESSAGE
+   ===================================================== */
+
+function saveMessageToCurrentChat(text, sender) {
+
+  if (!activeChat) {
+
+    activeChat = {
+      id: Date.now(),
+      title: text.substring(0, 30),
+      messages: [],
+      date: new Date().toISOString()
+    };
+
+    askMeHistory.unshift(activeChat);
+  }
+
+  activeChat.messages.push({
+    text: text,
+    sender: sender,
+    time: new Date().toISOString()
+  });
+
+  if (
+    activeChat.title === getText().newChat &&
+    sender === "user"
+  ) {
+    activeChat.title = text.substring(0, 30);
+  }
+
+  saveHistory();
+  renderHistory();
+}
+
+
+/* =====================================================
+   OVERRIDE MESSAGE FUNCTION
+   ===================================================== */
+
+window.addMessage = function(text, sender) {
+
+  const chatBox =
+    document.getElementById("chat");
+
+  if (!chatBox) return null;
+
+  const div = document.createElement("div");
+
+  div.className = "msg " + sender;
+
+  div.textContent = text;
+
+  chatBox.appendChild(div);
+
+  chatBox.scrollTop =
+    chatBox.scrollHeight;
+
+  saveMessageToCurrentChat(
+    text,
+    sender
+  );
+
+  return div;
+};
+
+
+/* =====================================================
+   CODE WORD PROTECTION
+   ===================================================== */
+
+let historyAttempts = 0;
+
+function openHistory() {
+
+  const savedCode =
+    localStorage.getItem("askmeHistoryCode");
+
+  if (!savedCode) {
+
+    const newCode = prompt(
+      getText().codeWord
+    );
+
+    if (!newCode) return;
 
     localStorage.setItem(
-        "askMeChatHistory",
-        JSON.stringify(chatHistory)
-    );
-}
-
-
-function renderChatHistory() {
-
-    const historyContainer =
-        document.getElementById("chatHistory");
-
-    if (!historyContainer) {
-        return;
-    }
-
-    historyContainer.innerHTML = "";
-
-    chatHistory.forEach(chat => {
-
-        const item = document.createElement("button");
-
-        item.textContent = chat.title;
-
-        item.onclick = function () {
-            openChat(chat.id);
-        };
-
-        historyContainer.appendChild(item);
-    });
-}
-
-
-function openChat(id) {
-
-    const chat = chatHistory.find(
-        item => item.id === id
+      "askmeHistoryCode",
+      newCode
     );
 
-    if (!chat) {
-        return;
-    }
+    historyAttempts = 0;
 
-    currentChatId = id;
+    renderHistory();
 
-    /*
-       Existing chat-opening logic can use this chat object.
-    */
+    return;
+  }
 
-    console.log("Opened chat:", chat);
+  const inputCode =
+    prompt(getText().enterCode);
+
+  if (inputCode === savedCode) {
+
+    historyAttempts = 0;
+
+    renderHistory();
+
+    return;
+  }
+
+  historyAttempts++;
+
+  if (historyAttempts >= 5) {
+
+    alert(getText().locked);
+
+    return;
+  }
+
+  alert(
+    getText().wrongCode
+  );
 }
 
 
-/* ================================
-   START
-   ================================ */
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
 
-renderChatHistory();
+function createAskMeSidebar() {
+
+  if (
+    document.getElementById("askmeSidebar")
+  ) {
+    return;
+  }
+
+  const sidebar =
+    document.createElement("aside");
+
+  sidebar.id = "askmeSidebar";
+
+  sidebar.style.cssText = `
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    padding: 18px;
+    z-index: 9998;
+    overflow-y: auto;
+    background: #000;
+  `;
+
+  const newChat =
+    document.createElement("button");
+
+  newChat.id = "askmeNewChat";
+  newChat.textContent = getText().newChat;
+
+  newChat.style.cssText = `
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:12px;
+  `;
+
+  newChat.onclick = createNewChat;
+
+
+  const history =
+    document.createElement("button");
+
+  history.id = "askmeHistoryButton";
+  history.textContent = getText().history;
+
+  history.style.cssText = `
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:12px;
+  `;
+
+  history.onclick = openHistory;
+
+
+  const settings =
+    document.createElement("button");
+
+  settings.textContent =
+    getText().settings;
+
+  settings.style.cssText = `
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:12px;
+  `;
+
+  settings.onclick = function() {
+
+    document
+      .getElementById("languageScreen")
+      .style.display = "flex";
+  };
+
+
+  const list =
+    document.createElement("div");
+
+  list.id = "askmeHistoryList";
+
+
+  sidebar.appendChild(newChat);
+  sidebar.appendChild(history);
+  sidebar.appendChild(settings);
+  sidebar.appendChild(list);
+
+  document.body.appendChild(sidebar);
+
+  renderHistory();
+}
+
+
+/* =====================================================
+   LOAD
+   ===================================================== */
+
+window.addEventListener("load", function() {
+
+  const saved =
+    localStorage.getItem("askmeLanguage");
+
+  if (saved && LANG[saved]) {
+
+    selectedLanguage = saved;
+
+    document
+      .getElementById("languageScreen")
+      .style.display = "none";
+
+    createAskMeSidebar();
+  }
+
+  translateApp();
+
+});
 </script>
 </body>
 </html>
